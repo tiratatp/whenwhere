@@ -8,7 +8,20 @@
 	    android:id="@+id/mapview"
 	    android:layout_width="fill_parent"
 	    android:clickable="true"
-	    android:apiKey="0NETlt3OVtFJprJRnolzilVfsj84pAzmhhMQKVg"
+	    android:apiKey="0NETlt3OVtFIoq73yo0HwiRduE8nvlobmgeHJlw"
 		android:layout_height="300dp"
 	/>
+
+	<SeekBar
+	    android:id="@+id/seekBar"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" />
+
+	<TextView
+	    android:id="@+id/textView"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Distance: 1 KM."
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </LinearLayout>
