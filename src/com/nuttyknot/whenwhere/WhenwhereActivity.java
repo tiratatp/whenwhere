@@ -1,6 +1,7 @@
 package com.nuttyknot.whenwhere;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
 
@@ -17,8 +18,14 @@ public class WhenwhereActivity extends Activity {
 		browser.addJavascriptInterface(this, "backend");
 		browser.loadUrl("file:///android_asset/main.htm");
 	}
+	
+	public void createWhere() {
+		Intent intent = new Intent(this, WhereActivity.class);
+    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	startActivity(intent);
+	}
 
-	public void create(String in) {
-		final String url = "file:///android_asset/www/" + in;
+	public void loadUrl(String in) {	    
+		browser.loadUrl("file:///android_asset/" + in);
 	}
 }
