@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
 	<com.google.android.maps.MapView
 	    xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:id="@+id/mapview"
 	    android:layout_width="fill_parent"
-	    android:clickable="true"
-	    android:apiKey="0NETlt3OVtFJprJRnolzilVfsj84pAzmhhMQKVg"
-		android:layout_height="300dp"
-	/>
+	    android:layout_height="match_parent"
+	    android:apiKey="0wRvhkOSo90smbMuAQwQGQBdg9oGPoJeiPXDi-Q"
+	    android:clickable="true" />
+
 </LinearLayout>

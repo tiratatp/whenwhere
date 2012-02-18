@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">    
+    <title>When & Where - Event Information</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css" />
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <script src="js/md5-min.js"></script>
+    <script src="js/jquery.mobile-1.0.1.min.js"></script>        
+    <script>
+    $(function () {
+      var id = "";
+
+      function dump(arr, level) {
+        var dumped_text = "";
+        if(!level) {
+          level = 0
+        }
+        var level_padding = "";
+        for(var j = 0;j < level + 1;j++) {
+          level_padding += "    "
+        }
+        if(typeof arr == "object") {
+          for(var item in arr) {
+            var value = arr[item];
+            if(typeof value == "object") {
+              dumped_text += level_padding + "'" + item + "' ...\n";
+              dumped_text += dump(value, level + 1)
+            }else {
+              dumped_text += level_padding + "'" + item + "' => \"" + value + '"\n'
+            }
+          }
+        }else {
+          dumped_text = "===>" + arr + "<===(" + typeof arr + ")"
+        }
+        return dumped_text
+      }
+
+      function showLoading() {
+        $.mobile.showPageLoadingMsg();
+      }
+
+      function hideLoading() {
+        $.mobile.hidePageLoadingMsg();
+      }
+
+      function createWhere(id) {
+        backend.createWhere(id);        
+      }
+
+      function createListItem(person) {
+        var ret = '<li><img alt="'+person.name+'" src="'+getGravatar(person.email)+'" /><h3>'+person.name+'</h3><p>'+person.position+'</p></li>';
+        return ret;
+      }
+
+      function getEventInfo() {    
+        if(!isFinite(id))  {
+          return;
+        }
+        showLoading();        
+        var ajax = $.ajax({
+          url: "https://inkingimuldstifficataill:7nwajDfpUL7QMfFIJyAHeBoN@nuttyknot.cloudant.com/whenwhere/" + id,
+          success: function(data) {
+            if(data.error) {
+              console.log(data.error);
+              // handle invalid event id
+              return;
+            }
+            console.log("data:"+dump(data));
+            var people = data.people,
+                people_length = people.length,
+                people_container = $("#people_container");
+            if(typeof people_length == "undefined") {
+              people = [people];
+            }       
+            for(var i=0;i<people.length;i++) {
+              people_container.prepend(createListItem(people[i]));
+            }
+            people_container.listview('refresh');
+            hideLoading();
+          },
+          beforeSend: function(req) {
+            req.setRequestHeader('Authorization', 'Basic aW5raW5naW11bGRzdGlmZmljYXRhaWxsOjdud2FqRGZwVUw3UU1mRklKeUFIZUJvTg==');
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log("ERROR:"+jqXHR+textStatus+errorThrown);
+          },
+          dataType: "json"
+        });
+      }
+
+      function getGravatar(email) {
+        var url = 'http://www.gravatar.com/avatar/' + hex_md5(email) + '.jpg?s=80';
+        console.log(url)
+        return url;
+      }
+
+      function getEventId() {
+        id = localStorage.event_id;      
+      }
+
+      getEventId();
+      getEventInfo();
+
+      $(function() {
+        $("#join").click(function() {
+          backend.createWhere(id);
+        });
+      });
+    });
+    </script>
+    
+    <!-- Le fav and touch icons -->
+    <!--
+    <link rel="shortcut icon" href="images/favicon.ico">
+
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">-->
+  </head>
+  <body>
+    <div data-role="page">      
+      <div data-theme="b" data-role="header">
+        <a href="#" data-icon="back" data-rel="back">Back</a>
+        <h1>Event</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+       <ul id="people_container" data-role="listview">        
+        <li>
+          <button id="join" data-theme="b">Join</button>
+        </li>
+      </ul>
+      </div><!-- /content -->    
+    </div><!-- /page -->
+  </body>
+</html>
