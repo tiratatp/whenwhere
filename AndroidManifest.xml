@@ -6,6 +6,9 @@
 
     <uses-sdk android:minSdkVersion="10" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <user-permission android:name="android.permission.ACCESS_GPS" />
+    <uses-permission android:name="android.permission.ACCESS_ASSISTED_GPS"/>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
         android:icon="@drawable/ic_launcher"
