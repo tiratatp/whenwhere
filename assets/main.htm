@@ -7,52 +7,36 @@
     <meta name="author" content="">    
     <title>When & Where</title>
     <link rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css" />
+    <style>
+    .center {
+      text-align: center;
+    }
+    .italic {
+      font-style:italic;
+    }
+    </style>
     <script src="js/jquery-1.7.1.min.js"></script>
     <script src="js/jquery.mobile-1.0.1.min.js"></script>  
     <script>
     function createWhere() {
       backend.createWhere();
     }
-    $(function() {
-      $("form").submit(function(){
-        var event_field = $("#event_number"),
-          event_id = event_field.val();
-        if(event_id == "") {
-          event_field.focus();
-          return false;
-        }
-        localStorage.event_id = event_id;
-      });
-    });
-    
     </script>      
   </head>
   <body>
     <div data-role="page">      
       <div data-role="content">
-        <h1>When & Where</h1>
+        <div class="center">
+          <h1>When & Where</h1>
+          <p class="italic">Find the right place and right time to hangout!</p>
+          <img src="img/staticmap.png" alt="map"/>
+          <!--https://maps.googleapis.com/maps/api/staticmap?center=13.73202,100.57870&zoom=13&size=300x300&sensor=false&markers=13.72202,100.57870-->
+        </div>
         <ul data-role="listview" data-inset="true">
           <li><a href="#" onclick="createWhere();return false">Create</a></li>
-          <li><a href="#join">Join</a></li>      
+          <li><a data-ajax="false" href="search.htm">Join</a></li>      
         </ul>
       </div><!-- /content -->    
-    </div><!-- /page -->
-
-    <div data-role="page" id="join">
-      <div data-theme="b" data-role="header">
-        <a href="#" data-icon="back" data-rel="back">Back</a>
-        <h1>Search</h1>
-      </div><!-- /header -->
-      <div data-role="content">
-        <form action="event_info.htm" method="post" data-ajax="false">
-          <div data-role="fieldcontain">
-            <label for="event_number">Event Number:</label>
-            <input required="required" type="number" name="id" id="event_number" min="0" />
-          </div>
-          <!--<a href="#" onclick="submit();return false" data-role="button" data-theme="a">View Detail</a>-->
-          <button type="submit" data-theme="a">View Detail</button>
-        </form>
-      </div><!-- /content -->
     </div><!-- /page -->
   </body>
 </html>

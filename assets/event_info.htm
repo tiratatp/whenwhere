@@ -56,13 +56,22 @@
         return ret;
       }
 
+      // If the element's string matches the regular expression it is numbers and letters
+      function isAlphanumeric(value){
+        if(value.match(/^[0-9a-zA-Z]+$/)){
+          return true;
+        }else{
+          return false;
+        }
+      }
+
       function getEventInfo() {    
-        if(!isFinite(id))  {
+        if(!isAlphanumeric(id))  {
           return;
         }
         showLoading();        
         var ajax = $.ajax({
-          url: "https://inkingimuldstifficataill:7nwajDfpUL7QMfFIJyAHeBoN@nuttyknot.cloudant.com/whenwhere/" + id,
+          url: 'https://inkingimuldstifficataill:7nwajDfpUL7QMfFIJyAHeBoN@nuttyknot.cloudant.com/whenwhere/_design/rsvp/_view/by_event_id?key="' + id + '"',
           success: function(data) {
             if(data.error) {
               console.log(data.error);
@@ -70,14 +79,14 @@
               return;
             }
             console.log("data:"+dump(data));
-            var people = data.people,
+            var people = data.rows,
                 people_length = people.length,
                 people_container = $("#people_container");
             if(typeof people_length == "undefined") {
               people = [people];
             }       
             for(var i=0;i<people.length;i++) {
-              people_container.prepend(createListItem(people[i]));
+              people_container.prepend(createListItem(people[i].value));
             }
             people_container.listview('refresh');
             hideLoading();
@@ -107,6 +116,7 @@
 
       $(function() {
         $("#join").click(function() {
+          localStorage.isJoin = true;      
           backend.createWhere(id);
         });
       });

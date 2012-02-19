@@ -3,21 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-	<com.google.android.maps.MapView
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/mapview"
-	    android:layout_width="fill_parent"
-	    android:apiKey="0wRvhkOSo90smbMuAQwQGQBdg9oGPoJeiPXDi-Q"	    
-	    android:clickable="true"	    
-		android:layout_height="300dp"/>
-	<SeekBar
-	    android:id="@+id/seekBar"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" />
-	<TextView
-	    android:id="@+id/textView"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:text="Distance: 1 KM."
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <com.google.android.maps.MapView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:layout_weight="0.85"
+        android:apiKey="0wRvhkOSo90smbMuAQwQGQBdg9oGPoJeiPXDi-Q"
+        android:clickable="true" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Distance: 10 KM."
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/donebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done" />
+
 </LinearLayout>

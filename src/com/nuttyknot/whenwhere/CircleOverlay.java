@@ -1,44 +1,58 @@
 package com.nuttyknot.whenwhere;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.android.maps.Projection;
 
 public class CircleOverlay extends Overlay {
-	
-	private GeoPoint point;
-	private Paint paint1, paint2;
-	
-	public CircleOverlay (GeoPoint point){
-		this.point = point;
-		paint1 = new Paint();
-	    paint1.setARGB(128, 0, 0, 255);
-	    paint1.setStrokeWidth(2);
-	    paint1.setStrokeCap(Paint.Cap.ROUND);
-	    paint1.setAntiAlias(true);
-	    paint1.setDither(false);
-	    paint1.setStyle(Paint.Style.STROKE);
+	Context context;
+	double mLat;
+	double mLon;
+	boolean gotLocation = false;
+	float circleRadius = 15;
 
-	    paint2 = new Paint();
-	    paint2.setARGB(64, 0, 0, 255); 
+	public CircleOverlay(Context _context) {
+		context = _context;				
+	}
+	
+	public void setCircleRadius(float newRadius) {
+		this.circleRadius = newRadius;
+	}
+	
+	public void setLocation(double _lat, double _lon) {
+		mLat = _lat;
+		mLon = _lon;
+		gotLocation = true;
 	}
 
 	@Override
 	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
 
-	    Point pt = mapView.getProjection().toPixels(point, null);
-	    float radius = (float) Math.pow(2, mapView.getZoomLevel() - 10);
+		super.draw(canvas, mapView, shadow);
+		if(!gotLocation) {
+			return;
+		}
+		Projection projection = mapView.getProjection();
 
-	    if(radius < canvas.getHeight()/25){
-	        radius = canvas.getHeight()/25;
-	    }
+		Point pt = new Point();
 
-	    canvas.drawCircle(pt.x, pt.y, radius, paint2);
-	    canvas.drawCircle(pt.x, pt.y, radius, paint1);
+		GeoPoint geo = new GeoPoint((int) (mLat * 1e6), (int) (mLon * 1e6));
 
+		projection.toPixels(geo, pt);		
+
+		Paint innerCirclePaint;
+
+		innerCirclePaint = new Paint();
+		innerCirclePaint.setARGB(100, 255, 255, 255);
+		innerCirclePaint.setAntiAlias(true);
+		innerCirclePaint.setStyle(Paint.Style.FILL);
+
+		canvas.drawCircle((float) pt.x, (float) pt.y, projection.metersToEquatorPixels(circleRadius * 1000),
+				innerCirclePaint);
 	}
-
 }

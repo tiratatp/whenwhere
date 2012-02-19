@@ -1,11 +1,14 @@
 package com.nuttyknot.whenwhere;
 
-import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.google.android.maps.GeoPoint;
@@ -14,20 +17,58 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.nuttyknot.whenwhere.R;;
 
-public class WhereActivity extends MapActivity {
+public class WhereActivity extends MapActivity  implements LocationListener{
 	
 	MapController 	mapController;
 	MapView			mapView;
 	SeekBar			seekBar;
+	Button			doneButton;
+	CircleOverlay	circleOverlay;
+	
+	Location 		currentPosition;
+	
+    // private static final String TAG = "RefreshLocationListener";
+
+    @Override
+    public void onLocationChanged(Location location) {
+		int lat = (int) (location.getLatitude() * 1E6);
+        int lng = (int) (location.getLongitude() * 1E6);
+        currentPosition = location;
+		GeoPoint point = new GeoPoint(lat, lng);
+		mapController.animateTo(point);		
+		doneButton.setClickable(true);		
+		circleOverlay.setLocation(location.getLatitude(), location.getLongitude());
+		mapView.invalidate();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) { }
+
+    @Override
+    public void onProviderEnabled(String provider) { }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) { }
+	
+	private void callWhenActivity() {
+		Log.d("com.nuttyknot.whenwhere", "Position: "+ currentPosition);		
+		Intent intent = new Intent(this, WebviewActivity.class);		
+		intent.putExtra("current_position", currentPosition.getLatitude() +", " + currentPosition.getLongitude());
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+	}
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.where);        
-        LocationHelper.start_coarse(this, new MyLocationListener(this), 0, 0);
+        LocationHelper.start_coarse(this, this, 0, 0);
         mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
+        circleOverlay = new CircleOverlay(this);
+        mapView.getOverlays().add(circleOverlay);
         mapController = mapView.getController();
-		mapController.setZoom(16);
+		mapController.setZoom(14);
+		
 		
 		seekBar = (SeekBar) findViewById(R.id.seekBar);
 		seekBar.setMax(25);
@@ -52,8 +93,22 @@ public class WhereActivity extends MapActivity {
 				// TODO Auto-generated method stub
 				TextView txtView = (TextView) findViewById(R.id.textView);			
 				txtView.setText("Distance: " + progress + " Km");
+				circleOverlay.setCircleRadius(progress);
+				mapView.invalidate();
 			}
 		});
+		         
+		doneButton = (Button) findViewById(R.id.donebutton);
+		doneButton.setClickable(false);
+        doneButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				callWhenActivity();
+			}
+        	
+        });
     }
     
 	@Override
@@ -61,34 +116,4 @@ public class WhereActivity extends MapActivity {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-    private class MyLocationListener implements LocationListener {
-
-        // private static final String TAG = "RefreshLocationListener";
-
-        private Context context;
-
-        public MyLocationListener(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-			int lat = (int) (location.getLatitude() * 1E6);
-	        int lng = (int) (location.getLongitude() * 1E6);
-			GeoPoint point = new GeoPoint(lat, lng);
-			mapController.animateTo(point);
-			CircleOverlay circleOverlay = new CircleOverlay(point); 
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) { }
-
-        @Override
-        public void onProviderEnabled(String provider) { }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) { }
-
-    }
 }

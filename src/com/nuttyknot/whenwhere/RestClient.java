@@ -4,14 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
- 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
  
@@ -45,24 +46,36 @@ public class RestClient {
         }
         return sb.toString();
     }
+    
+    
  
     /* This is a test function which will connects to a given
      * rest service and prints it's response to Android Log with
      * labels "Praeda".
      */
-    public static JSONObject connect(String url)
-    {
+    public static JSONObject connect(String url, JSONObject jsonInput)
+    {    		
     	JSONObject ret = new JSONObject();
-        HttpClient httpclient = new DefaultHttpClient();
- 
+        HttpClient httpclient = new DefaultHttpClient();       
+        
         // Prepare a request object
-        HttpGet httpget = new HttpGet(url); 
+        HttpPost httppost = new HttpPost(url);
+        try {
+            StringEntity se = new StringEntity(jsonInput.toString());
+            se.setContentType("application/json;charset=UTF-8");
+            httppost.setEntity(se);	
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        // base64 mrstrountlyinhedgmadendi:mLRN14gNMLEoDqlaIvtU7VXq 
+        httppost.setHeader("Authorization", "Basic bXJzdHJvdW50bHlpbmhlZGdtYWRlbmRpOm1MUk4xNGdOTUxFb0RxbGFJdnRVN1ZYcQ==");
         Log.i("REST",url);
  
         // Execute the request
         HttpResponse response;
         try {
-            response = httpclient.execute(httpget);
+            response = httpclient.execute(httppost);
             // Examine the response status
             Log.i("REST",response.getStatusLine().toString());
  
