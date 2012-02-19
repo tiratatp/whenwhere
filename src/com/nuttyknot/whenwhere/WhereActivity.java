@@ -93,7 +93,7 @@ public class WhereActivity extends MapActivity  implements LocationListener{
 					boolean fromUser) {
 				// TODO Auto-generated method stub
 				TextView txtView = (TextView) findViewById(R.id.textView);			
-				txtView.setText("Distance: " + progress + " Km");
+				txtView.setText("Radius: " + progress + " KM.");
 				circleOverlay.setCircleRadius(progress);
 				mapView.invalidate();
 			}

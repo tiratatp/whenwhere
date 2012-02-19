@@ -54,8 +54,8 @@
             end_time = new Date(now + 5400000),
             diff = end_time - start_time,
             free_time = $("#free_time");
-        slider_start = $(".slider_start").val(30).slider('refresh');
-        slider_end = $(".slider_end").val(150).slider('refresh');
+        slider_start = $(".slider_start").val(90).slider('refresh');
+        slider_end = $(".slider_end").val(210).slider('refresh');
 
         function getTime(date_obj) {
           var min = date_obj.getMinutes();
@@ -149,7 +149,7 @@
     <div data-role="page">      
       <div data-theme="b" data-role="header">
         <a href="#" data-icon="back" data-rel="back">Back</a>
-        <h1>When</h1>
+        <h1>When?</h1>
       </div><!-- /header -->
       <div data-role="content">
         <form action="#" method="get">
