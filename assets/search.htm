@@ -28,7 +28,14 @@
         }
         localStorage.event_id = event_id;
       });
-    });    
+      $("#qr_code").click(function() {
+        backend.scanQR();
+      });
+    });  
+    function callback(event_id) {
+      console.log("QR:"+event_id);
+      $("#event_number").val(event_id);
+    }  
     </script>      
   </head>
   <body>
@@ -41,11 +48,12 @@
         <form action="event_info.htm" method="post" data-ajax="false">
           <div data-role="fieldcontain">
             <label for="event_number">Event Number:</label>
-            <input required="required" type="text" value="dc10c197b636ea1d70642c85e360eb36" name="id" id="event_number" min="0" />
+            <input required="required" type="text" value="" name="id" id="event_number" min="0" />
           </div>
           <!--<a href="#" onclick="submit();return false" data-role="button" data-theme="a">View Detail</a>-->
           <button type="submit" data-theme="a">View Detail</button>
         </form>
+        <button id="qr_code" data-theme="e">Scan QR Code</button>
       </div><!-- /content -->
     </div><!-- /page -->
   </body>

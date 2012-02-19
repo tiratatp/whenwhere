@@ -3,6 +3,7 @@ package com.nuttyknot.whenwhere;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -87,5 +88,25 @@ public class JavaScriptInterface {
 		share.putExtra(Intent.EXTRA_TEXT, message);
 
 		mContext.startActivity(Intent.createChooser(share, "Share this!"));
+	}
+	
+    public void scanQR() {
+        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+        intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+        ((Activity) mContext).startActivityForResult(intent, 0);
+    }
+
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	    if (requestCode == 0) {
+	        //if (resultCode == RESULT_OK) {
+	            String contents = intent.getStringExtra("SCAN_RESULT");
+	            
+	            //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+	            loadUrl("javascript:callback('"+contents+"')");
+	            // Handle successful scan
+	        //} else if (resultCode == RESULT_CANCELED) {
+	            // Handle cancel
+	        //}
+	    }
 	}
 }

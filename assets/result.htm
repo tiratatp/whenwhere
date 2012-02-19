@@ -10,22 +10,27 @@
     <script src="js/jquery-1.7.1.min.js"></script>
     <script src="js/jquery.mobile-1.0.1.min.js"></script>  
     <script>
+    var url = "http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl="+ localStorage.event_id;
     $(function() {
       var qr = $("<img/>").attr({
         "alt":"qr code",
         "id":"qr_code",
-        "src":"http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl="+ localStorage.event_id,
+        "src":url,
       });
       $("#img_container").append(qr);      
     });
     function share() {
-      backend.shareLink();
+      backend.shareLink(url);
+    }
+    function goHome() {
+     backend.loadPage("main.htm");
     }
     </script>
   </head>
   <body>
     <div data-role="page">      
-      <div data-theme="b" data-role="header">        
+      <div data-theme="b" data-role="header">   
+        <a href="#" onclick="goHome();return false" data-icon="home">Home</a>     
         <h1>Done!</h1>
       </div><!-- /header -->
       <div data-role="content" id="container">        

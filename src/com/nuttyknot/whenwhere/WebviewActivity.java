@@ -74,4 +74,26 @@ public class WebviewActivity extends Activity {
 	    // system behavior (probably exit the activity)
 	    return super.onKeyDown(keyCode, event);
 	}
+	
+	public void loadUrl(final String in) {
+		handler.post(new Runnable() {
+			public void run() {
+				browser.loadUrl(in);
+			}
+		});
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	    if (requestCode == 0) {
+	        //if (resultCode == RESULT_OK) {
+	            String contents = intent.getStringExtra("SCAN_RESULT");
+	            
+	            //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+	            loadUrl("javascript:callback('"+contents+"')");
+	            // Handle successful scan
+	        //} else if (resultCode == RESULT_CANCELED) {
+	            // Handle cancel
+	        //}
+	    }
+	}
 }
