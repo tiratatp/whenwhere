@@ -52,7 +52,7 @@
       }
 
       function createListItem(person) {
-        var ret = '<li><img alt="'+person.name+'" src="'+getGravatar(person.email)+'" /><h3>'+person.name+'</h3><p>'+person.position+'</p></li>';
+        var ret = '<li><img alt="'+person.name+'" src="'+getGravatar(person.email)+'" /><h3>'+person.name+' ('+person.email+')</h3><p>'+person.position+'</p></li>';
         return ret;
       }
 

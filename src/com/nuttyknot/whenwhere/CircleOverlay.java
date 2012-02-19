@@ -48,7 +48,7 @@ public class CircleOverlay extends Overlay {
 		Paint innerCirclePaint;
 
 		innerCirclePaint = new Paint();
-		innerCirclePaint.setARGB(100, 255, 255, 255);
+		innerCirclePaint.setARGB(50, 0, 0, 0);
 		innerCirclePaint.setAntiAlias(true);
 		innerCirclePaint.setStyle(Paint.Style.FILL);
 

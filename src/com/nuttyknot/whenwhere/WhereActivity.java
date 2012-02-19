@@ -54,6 +54,7 @@ public class WhereActivity extends MapActivity  implements LocationListener{
 		Log.d("com.nuttyknot.whenwhere", "Position: "+ currentPosition);		
 		Intent intent = new Intent(this, WebviewActivity.class);		
 		intent.putExtra("current_position", currentPosition.getLatitude() +", " + currentPosition.getLongitude());
+		intent.putExtra("radius", seekBar.getProgress());
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
@@ -71,8 +72,8 @@ public class WhereActivity extends MapActivity  implements LocationListener{
 		
 		
 		seekBar = (SeekBar) findViewById(R.id.seekBar);
-		seekBar.setMax(25);
-		seekBar.setProgress(10);
+		seekBar.setMax(20);
+		seekBar.setProgress(5);
 		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			
 			@Override
