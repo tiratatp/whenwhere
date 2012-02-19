@@ -14,7 +14,7 @@ public class CircleOverlay extends Overlay {
 	double mLat;
 	double mLon;
 	boolean gotLocation = false;
-	float circleRadius = 15;
+	float circleRadius = 5;
 
 	public CircleOverlay(Context _context) {
 		context = _context;				
