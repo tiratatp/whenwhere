@@ -5,38 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">    
-    <title>When & Where</title>
+    <title>When &amp; Where - Result</title>
     <link rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
     <script src="js/jquery-1.7.1.min.js"></script>
     <script src="js/jquery.mobile-1.0.1.min.js"></script>  
-    <script>
-    var url = "http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl="+ localStorage.event_id;
-    $(function() {
-      var qr = $("<img/>").attr({
-        "alt":"qr code",
-        "id":"qr_code",
-        "src":url,
-      });
-      $("#img_container").append(qr);      
-    });
-    function share() {
-      backend.shareLink(url);
-    }
-    function goHome() {
-     backend.loadPage("main.htm");
-    }
-    </script>
+    <script src="js/json2.min.js"></script>
+    <script src="js/md5-min.js"></script>
+    <script src="js/utils.min.js"></script>    
+    <script src="js/main.js"></script>   
   </head>
   <body>
-    <div data-role="page">      
+    <div id="result" data-role="page">      
       <div data-theme="b" data-role="header">   
-        <a href="#" onclick="goHome();return false" data-icon="home">Home</a>     
+        <a href="main.htm" data-icon="home">Home</a>     
         <h1>Done!</h1>
       </div><!-- /header -->
       <div data-role="content" id="container">        
         <div id="img_container">
         </div>   
-        <a data-role="button" data-theme="e" href="#" onclick="share(); return false">Share this!</a>
+        <a class="share" data-role="button" data-theme="e" href="#">Share this!</a>
       </div><!-- /content -->    
     </div><!-- /page -->
   </body>

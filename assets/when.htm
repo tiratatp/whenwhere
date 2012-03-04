@@ -5,175 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">    
-    <title>When & Where - When</title>
+    <title>When &amp; Where - When</title>
     <link rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
     <script src="js/jquery-1.7.1.min.js"></script>
-    <script src="js/jquery.mobile-1.0.1.min.js"></script>    
-    <style>
-    .dual_slider{
-        position: relative;
-        height: 30px;
-        margin-top: 0.3em;
-    }
-    .dual_slider label{
-        position: absolute;
-        top: -30px;
-        left: 10px;
-    }                            
-    /* moves label field */
-    .dual_slider .slider_start{
-        top: -40px;
-        position: absolute;
-        left: 100px;
-    }       
-    /* moves first input field */ 
-    .dual_slider .slider_end{
-        top: -40px;
-        position: absolute;
-        left: 170px;
-    }      
-    .dual_slider input[type="number"] {
-        display: none;
-    }
-    /* move second input field */ 
-    .dual_slider div.ui-slider{
-        position: absolute;
-        width: 100%;
-        margin:0!important;
-    }                   
-    /* move both sliders - adressing 1st slider with CSS is hard */ 
-    .dual_slider div:last-child{
-        position: absolute;
-        left: 0px;
-    }</style>
-    <script>
-    var slider_start, slider_end;
-    $(function () {
-        var now = new Date().getTime(),
-            start_time = new Date(now + 1800000),
-            end_time = new Date(now + 5400000),
-            diff = end_time - start_time,
-            free_time = $("#free_time");
-        slider_start = $(".slider_start").val(90).slider('refresh');
-        slider_end = $(".slider_end").val(210).slider('refresh');
-
-        function getTime(date_obj) {
-          var min = date_obj.getMinutes();
-          if(min/10 < 1) {
-            min = "0" + min;
-          }
-          return date_obj.getHours() + ":" + min;
-        }
-
-        function render() {
-            var hour = diff/3600000;
-            free_time.val(getTime(start_time) + " - " + getTime(end_time) + " (About " + hour + " " + (hour>1?"hours":"hour") + ")");
-            diff = end_time - start_time;
-        }
-   
-        render();
-
-        slider_start.change(function () {
-            var min = slider_start.val(),                
-                max = slider_end.val();
-                
-            start_time = new Date(now + min*60000);          
-
-            if (min > max) {
-                console.log(min);
-                console.log(max);
-                slider_end.val(min).slider('refresh');
-            }
-
-            render();
-        });
-
-        slider_end.change(function () {
-            var min = slider_start.val(),                
-                max = slider_end.val();
-
-            end_time = new Date(now + max*60000);  
-
-            if (min > max) {
-                slider_start.val(max).slider('refresh');
-            }
-
-            render();
-        });
-    });
-
-    function showLoading() {
-        $.mobile.showPageLoadingMsg();
-    }
-
-    function hideLoading() {
-        $.mobile.hidePageLoadingMsg();
-    }
-
-    function submit() {
-        var name = $("#name"),
-            name_val = name.val(),
-            event_id = localStorage.event_id;
-        if(name_val == "") {
-            name.focus();
-            return false;
-        }
-        showLoading();
-        if(!localStorage.isJoin) {            
-            event_id = "";
-        }        
-        backend.submit(name_val, $("#email").val(), $("#action").val(), slider_start.val(), slider_end.val(), event_id);
-    }
-
-    function callback(event_id) {
-        hideLoading();
-        if(localStorage.isJoin) {
-            console.log("Join!"+localStorage.event_id);
-        } else {            
-            localStorage.event_id = event_id;    
-            console.log("Done!"+ event_id);
-        }        
-        backend.loadPage("result.htm");
-    }
-    </script>
-    
-    <!-- Le fav and touch icons -->
-    <!--
-    <link rel="shortcut icon" href="images/favicon.ico">
-
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">-->
+    <script src="js/jquery.mobile-1.0.1.min.js"></script>  
+    <script src="js/json2.min.js"></script>
+    <script src="js/md5-min.js"></script>
+    <script src="js/utils.min.js"></script>    
+    <script src="js/main.js"></script>   
   </head>
   <body>
-    <div data-role="page">      
+    <div id="when" data-role="page">      
       <div data-theme="b" data-role="header">
         <a href="#" data-icon="back" data-rel="back">Back</a>
         <h1>When?</h1>
       </div><!-- /header -->
       <div data-role="content">
-        <form action="#" method="get">
+        <form action="" method="get">
+            <div data-role="fieldcontain">
+                <img id="connect_facebook" alt="Connect with Facebook" src="img/fb-connect-large.png" />
+            </div>
             <div data-role="fieldcontain">
                 <label for="name">My name is: </label>
-                <input type="text" required="required" value="Knot" name="name" id="name" />
+                <input type="text" required="required" value="" name="name" id="name" />
             </div>
             <div data-role="fieldcontain">
                 <label for="email">and here's my email: </label>
-                <input type="text" name="email" value="nutty.knot@gmail.com" id="email" />
+                <input type="text" required="required" name="email" value="" id="email" />
             </div>
             <div data-role="fieldcontain">
                 <label for="action">I want to: </label>
-                <input type="text" name="action" value="hangout!" id="action" />
+                <input type="text" required="required" name="action" value="hangout!" id="action" />
             </div>
-          <div data-role="fieldcontain">            
-            <label for="free_time">I'm free between: </label>
-            <input type="text" name="free_time" id="free_time"/>
-            <div class="dual_slider">
-              <input type="range" required="required" name="start" class="slider_start" step="30" min="0" max="600" />
-              <input type="range" required="required" name="end" class="slider_end" step="30" min="0" max="600" data-track-theme="b"/>
-            </div>​
+          <div class="free_time" data-role="fieldcontain">            
+            <label for="free_time">I'm free: </label>
+            <input type="text" name="free_time" id="free_time" readonly="readonly"/>
           </div>
-          <a href="#" onclick="submit();return false" data-role="button" data-theme="a">Create Event!</a>
+          <div class="free_time" data-role="fieldcontain">            
+            <label for="start">Since: </label>
+            <input type="range" required="required" name="start" class="slider_start" step="30" min="0" max="600" />
+          </div>
+          <div class="free_time" data-role="fieldcontain">            
+            <label for="end">Until: </label>
+            <input type="range" required="required" name="end" class="slider_end" step="30" min="0" max="600" data-track-theme="b"/>            
+          </div>
+          <button type="submit" data-theme="a">Create Event!</button>
         </form>
       </div><!-- /content -->    
     </div><!-- /page -->

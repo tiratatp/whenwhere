@@ -3,6 +3,9 @@ package com.nuttyknot.whenwhere;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,12 +22,13 @@ public class WebviewActivity extends Activity {
 	private String current_position;
 	private int radius;
 	private Handler handler;
+	private JavaScriptInterface javaScriptInterface;
 
 	protected JSONObject getStoredVariable() throws JSONException {
-		JSONObject jsonInput = new JSONObject();		 
+		JSONObject jsonInput = new JSONObject();
 		jsonInput.put("position", current_position);
-		jsonInput.put("radius", radius);		
-        return jsonInput;
+		jsonInput.put("radius", radius);
+		return jsonInput;
 	}
 
 	/** Called when the activity is first created. */
@@ -32,49 +36,59 @@ public class WebviewActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		Intent intent = getIntent();
 		String url = "file:///android_asset/main.htm";
-		if(intent.hasExtra("event_id") || intent.hasExtra("current_position")) {
+		if (intent.hasExtra("event_id") || intent.hasExtra("current_position")) {
 			current_position = intent.getStringExtra("current_position");
 			radius = intent.getIntExtra("radius", 0);
 			url = "file:///android_asset/when.htm";
 		} else {
 			url = "file:///android_asset/main.htm";
-		}		
-				
+		}
+
 		handler = new Handler();
-		
+
 		browser = (WebView) findViewById(R.id.webView);
-		WebSettings webSettings = browser.getSettings();		
+		WebSettings webSettings = browser.getSettings();
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setDomStorageEnabled(true); // localStorage
-		webSettings.setDatabasePath("/data/data/com.nuttyknot.whenwhere/databases/");
-		
-		browser.addJavascriptInterface(new JavaScriptInterface(this, browser, handler), "backend");
+		webSettings
+				.setDatabasePath("/data/data/com.nuttyknot.whenwhere/databases/");
+
+		javaScriptInterface = new JavaScriptInterface(this, browser, handler);
+
+		browser.addJavascriptInterface(javaScriptInterface, "backend");
 		browser.loadUrl(url);
 		browser.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d("com.nuttyknot.whenwhere",
+				Log.d("console.log",
 						cm.message() + " -- From line " + cm.lineNumber()
 								+ " of " + cm.sourceId());
 				return true;
 			}
 		});
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    // Check if the key event was the Back button and if there's history
-	    if ((keyCode == KeyEvent.KEYCODE_BACK) && browser.canGoBack()) {
-	    	browser.goBack();
-	        return true;
-	    }
-	    // If it wasn't the Back key or there's no web page history, bubble up to the default
-	    // system behavior (probably exit the activity)
-	    return super.onKeyDown(keyCode, event);
+		// Check if the key event was the Back button and if there's history
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			Log.d("com.nuttyknot.whenwhere", "onKeyDown:" + browser.getUrl());
+			if (browser.canGoBack()) {
+				browser.goBack();
+				return true;
+			} else if (browser.getUrl() != "file:///android_asset/main.htm") {
+				loadUrl("file:///android_asset/main.htm");
+				return true;
+			}
+		}
+		// If it wasn't the Back key or there's no web page history, bubble up
+		// to the default
+		// system behavior (probably exit the activity)
+		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	public void loadUrl(final String in) {
 		handler.post(new Runnable() {
 			public void run() {
@@ -82,18 +96,19 @@ public class WebviewActivity extends Activity {
 			}
 		});
 	}
-	
+
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-	    if (requestCode == 0) {
-	        //if (resultCode == RESULT_OK) {
-	            String contents = intent.getStringExtra("SCAN_RESULT");
-	            
-	            //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-	            loadUrl("javascript:callback('"+contents+"')");
-	            // Handle successful scan
-	        //} else if (resultCode == RESULT_CANCELED) {
-	            // Handle cancel
-	        //}
-	    }
+
+		Log.d("misc", "onActivityResult");
+		// facebook sso
+		javaScriptInterface.authorizeCallback(requestCode, resultCode, intent);
+
+		// qr
+		IntentResult scanResult = IntentIntegrator.parseActivityResult(
+				requestCode, resultCode, intent);
+		if (scanResult != null) {
+			loadUrl("javascript:callback('" + scanResult.getContents() + "')");
+		}
+
 	}
 }
