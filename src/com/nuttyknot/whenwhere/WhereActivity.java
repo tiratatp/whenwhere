@@ -16,11 +16,6 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.nuttyknot.whenwhere.R;
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import com.facebook.android.*;
-import com.facebook.android.Facebook.*;
 
 public class WhereActivity extends MapActivity implements LocationListener {
 

@@ -2,19 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nuttyknot.whenwhere"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.1" >
 
     <uses-sdk android:minSdkVersion="10" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <user-permission android:name="android.permission.ACCESS_GPS" />
-    <uses-permission android:name="android.permission.ACCESS_ASSISTED_GPS"/>
-    <uses-permission android:name="android.permission.ACCESS_LOCATION"/>
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-permission android:name="android.permission.ACCESS_ASSISTED_GPS" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <uses-library android:name="com.google.android.maps" />
-        
+
         <activity
             android:name=".WebviewActivity"
             android:label="@string/app_name"
@@ -25,15 +29,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name=".WhereActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

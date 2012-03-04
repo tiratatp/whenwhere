@@ -23,7 +23,6 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.nuttyknot.whenwhere.WebviewActivity;
 
 public class JavaScriptInterface {
