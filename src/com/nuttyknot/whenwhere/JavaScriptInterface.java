@@ -1,7 +1,7 @@
 package com.nuttyknot.whenwhere;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.util.Date;
+import java.util.Iterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +40,10 @@ public class JavaScriptInterface {
 		handler = h;
 	}
 
+	public boolean isInsideWebView() {
+		return true;
+	}
+
 	/** Show a toast from the web page */
 	public void showToast(String toast) {
 		Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
@@ -72,6 +76,8 @@ public class JavaScriptInterface {
 
 	public void submit(String name, String email, String action, String when,
 			String event_id) {
+		Date now = new Date();
+		String dateString = String.format("%tF", now);
 		JSONObject jsonInput = new JSONObject();
 		try {
 			jsonInput = ((WebviewActivity) mContext).getStoredVariable();
@@ -81,6 +87,7 @@ public class JavaScriptInterface {
 			jsonInput.put("action", action);
 			jsonInput.put("event_id", event_id);
 			jsonInput.put("when", when);
+			jsonInput.put("create_at", dateString);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -91,7 +98,7 @@ public class JavaScriptInterface {
 		Log.d("com.nuttyknot.whenwhere", jsonInput.toString());
 		JSONObject json = RestClient.connect(url, jsonInput);
 		try {
-			loadUrl("javascript:callback('" + json.get("id") + "')");
+			loadUrl("javascript:whenwhere.callback('" + json.get("id") + "')");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -117,22 +124,54 @@ public class JavaScriptInterface {
 	}
 
 	public void queryGraph(final String endpoint) {
+		String output_json = "";
 		try {
 			Log.d("Facebook", "Getting \"" + endpoint + "\"");
-			String json = facebook.request(endpoint);
-			loadUrl("javascript:facebook_callback('" + json + "')");
-			Log.d("Facebook", json);
-		} catch (MalformedURLException e) {
+			output_json = facebook.request(endpoint);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+			output_json = "{'error':'" + e.toString() + "'}";
+		} finally {
+			Log.d("Facebook", output_json);
+			loadUrl("javascript:whenwhere.facebook_callback('" + output_json
+					+ "')");			
+		}
+	}
+
+	public void queryGraph(final String endpoint, final String param_json_str) {
+		String output_json = "";
+		try {
+			Bundle param = new Bundle();
+			JSONObject json = new JSONObject(param_json_str);
+			@SuppressWarnings("unchecked")
+			Iterator<String> json_iterator = json.keys();
+			boolean has_next = json_iterator.hasNext();
+			String key, value;
+			while (has_next) {
+				key = json_iterator.next();
+				value = json.optString(key);
+				has_next = json_iterator.hasNext();
+				if (value == "") {
+					continue;
+				}
+				param.putString(key, value);
+			}
+			Log.d("Facebook", "Getting \"" + endpoint + "\" using " + param);
+			output_json = facebook.request(endpoint, param);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			output_json = "{'error':'" + e.toString() + "'}";
+		} finally {
+			Log.d("Facebook", output_json);
+			loadUrl("javascript:whenwhere.facebook_callback('" + output_json
+					+ "')");			
 		}
 	}
 
 	private void onFacebookLoggedIn() {
-		loadUrl("javascript:facebook_login_callback()");
+		loadUrl("javascript:whenwhere.facebook_login_callback()");
 	}
 
 	public void facebookSSO() {

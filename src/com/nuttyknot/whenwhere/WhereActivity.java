@@ -59,8 +59,10 @@ public class WhereActivity extends MapActivity implements LocationListener {
 	private void callWhenActivity() {
 		Log.d("com.nuttyknot.whenwhere", "Position: " + currentPosition);
 		Intent intent = new Intent(this, WebviewActivity.class);
-		intent.putExtra("current_position", currentPosition.getLatitude()
-				+ ", " + currentPosition.getLongitude());
+		intent.putExtra("latitude",
+				String.valueOf(currentPosition.getLatitude()));
+		intent.putExtra("longitude",
+				String.valueOf(currentPosition.getLongitude()));
 		intent.putExtra("radius", seekBar.getProgress());
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
@@ -99,7 +101,7 @@ public class WhereActivity extends MapActivity implements LocationListener {
 					boolean fromUser) {
 				// TODO Auto-generated method stub
 				TextView txtView = (TextView) findViewById(R.id.textView);
-				txtView.setText("Radius: " + progress + " KM.");
+				txtView.setText("Radius: " + progress + " km.");
 				circleOverlay.setCircleRadius(progress);
 				mapView.invalidate();
 			}

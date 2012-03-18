@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">    
-    <title>When &amp; Where - Event Information</title>
+    <title>When &amp; Where - Where?</title>
     <link rel="stylesheet" href="css/jquery.mobile-1.1.0-rc.1.min.css" />
     <link rel="stylesheet" href="css/main.css" />
     <script src="js/jquery-1.7.1.min.js"></script>
@@ -17,19 +17,15 @@
     <script src="js/main.js"></script>    
   </head>
   <body>
-    <div id="event_info" data-role="page">      
+    <div id="decide_where" data-role="page">      
       <div data-theme="b" data-role="header">
         <a href="#" data-icon="back" data-rel="back">Back</a>
-        <h1>Event</h1>
+        <h1>Where?</h1>
+        <a href="search_where.htm" data-rel="dialog" data-icon="search">Search</a>
       </div><!-- /header -->
-      <div data-role="content">        
-        <ul id="people_container" data-role="listview" data-inset="true"></ul>
-        <div class="join">
-          <button data-theme="b">Join</button>
-        </div>
-        <div class="owner">
-          <a href="decide_where.htm" data-theme="b" data-role="button">Decide &quot;When &amp; Where&quot;</a>
-        </div>
+      <div data-role="content">
+        <ul id="places_container" data-role="listview" data-filter="true">                
+        </ul>
       </div><!-- /content -->    
     </div><!-- /page -->
   </body>

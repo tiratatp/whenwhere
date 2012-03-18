@@ -6,19 +6,20 @@
     <meta name="description" content="">
     <meta name="author" content="">    
     <title>When &amp; Where - When</title>
-    <link rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css" />
+    <link rel="stylesheet" href="css/jquery.mobile-1.1.0-rc.1.min.css" />
     <link rel="stylesheet" href="css/main.css" />
     <script src="js/jquery-1.7.1.min.js"></script>
-    <script src="js/jquery.mobile-1.0.1.min.js"></script>  
+    <script src="js/jquery.mobile-1.1.0-rc.1.min.js"></script> 
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?sensor=false"></script> 
     <script src="js/json2.min.js"></script>
     <script src="js/md5-min.js"></script>
-    <script src="js/utils.min.js"></script>    
-    <script src="js/main.js"></script>   
+    <script src="js/backend.js"></script>    
+    <script src="js/main.js"></script>    
   </head>
   <body>
     <div id="when" data-role="page">      
       <div data-theme="b" data-role="header">
-        <a href="#" data-icon="back" data-rel="back">Back</a>
+        <a href="main.htm" data-icon="back">Back</a>
         <h1>When?</h1>
       </div><!-- /header -->
       <div data-role="content">
@@ -38,20 +39,17 @@
                 <label for="action">I want to: </label>
                 <input type="text" required="required" name="action" value="hangout!" id="action" />
             </div>
-          <div class="free_time" data-role="fieldcontain">            
-            <label for="free_time">I'm free: </label>
-            <input type="text" name="free_time" id="free_time" readonly="readonly"/>
-          </div>
-          <div class="free_time" data-role="fieldcontain">            
-            <label for="start">Since: </label>
-            <input type="range" required="required" name="start" class="slider_start" step="30" min="0" max="600" />
-          </div>
-          <div class="free_time" data-role="fieldcontain">            
-            <label for="end">Until: </label>
-            <input type="range" required="required" name="end" class="slider_end" step="30" min="0" max="600" data-track-theme="b"/>            
-          </div>
-          <button type="submit" data-theme="a">Create Event!</button>
-        </form>
+            <div class="free_time" data-role="fieldcontain">            
+              <label for="free_time">I'm free: </label>
+              <input type="text" name="free_time" id="free_time" readonly="readonly"/>
+            </div>
+            <div class="dual_slider" data-role="fieldcontain">
+                <label class="ui-input-text" for="start">Slide me: </label>
+                <input type="range" required="required" name="start" class="slider_start" value="90" min="0" step="30" max="600" />
+                <input type="range" required="required" name="end" class="slider_end" value="210" min="0" step="30" max="600" data-theme="a" data-track-theme="b"/>
+            </div>
+            <button type="submit" data-theme="a">Create Event!</button>
+          </form>
       </div><!-- /content -->    
     </div><!-- /page -->
   </body>

@@ -19,14 +19,17 @@ import android.webkit.WebView;
 
 public class WebviewActivity extends Activity {
 	private WebView browser;
-	private String current_position;
+	private String current_latitude;
+	private String current_longitude;
 	private int radius;
 	private Handler handler;
 	private JavaScriptInterface javaScriptInterface;
 
 	protected JSONObject getStoredVariable() throws JSONException {
 		JSONObject jsonInput = new JSONObject();
-		jsonInput.put("position", current_position);
+		jsonInput.put("latitude", current_latitude);
+		jsonInput.put("longitude", current_longitude);
+		jsonInput.put("position", current_latitude+", "+current_longitude);
 		jsonInput.put("radius", radius);
 		return jsonInput;
 	}
@@ -39,8 +42,9 @@ public class WebviewActivity extends Activity {
 
 		Intent intent = getIntent();
 		String url = "file:///android_asset/main.htm";
-		if (intent.hasExtra("event_id") || intent.hasExtra("current_position")) {
-			current_position = intent.getStringExtra("current_position");
+		if (intent.hasExtra("event_id") || (intent.hasExtra("latitude") && intent.hasExtra("longitude"))) {
+			current_latitude = intent.getStringExtra("latitude");
+			current_longitude = intent.getStringExtra("longitude");
 			radius = intent.getIntExtra("radius", 0);
 			url = "file:///android_asset/when.htm";
 		} else {
