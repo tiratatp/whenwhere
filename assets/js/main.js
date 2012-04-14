@@ -15,11 +15,11 @@
         }
 
         function showLoading() {
-            $.mobile.showPageLoadingMsg();
+            backend.showLoading();
         }
 
         function hideLoading() {
-            $.mobile.hidePageLoadingMsg();
+            backend.hideLoading();
         }
 
         function dump(arr, level) {
@@ -98,7 +98,7 @@
                 }
                 if(event_length == 0) {
                     backend.showToast("No event yet!");
-                    event_container.append('<li><a class="create_event" href="#"><h3>No event yet!</h3><p>Create one?</p></a></li>');
+                    event_container.append('<li><a data-ajax="false" href="where.htm"><h3>No event yet!</h3><p>Create one?</p></a></li>');
                 } else {
                     for (var i = 0; i < event_length; i++) {
                         event_container.prepend(createEventListItem(events[i].value));
@@ -273,15 +273,6 @@
                 localStorage.isOwner = true;    
             });
 
-            $(".create_event").live("click", function() {
-                if(backend.isInsideWebView()) {
-                    backend.createWhere();    
-                } else {
-                    alert("not inside WebView");
-                }       
-                return false;
-            });
-
             $(".person").live("click", function() {
                 backend.showContact($(this).data("email"));
                 return false;
@@ -325,10 +316,12 @@
                         localStorage.isJoin = true;
                         backend.createWhere(id);
                     });
-                    $(".owner a", current_page).click(function() {
-                        localStorage.event_id = id;
-                        localStorage.isOwner = isOwner;
-                    });
+                    $(".owner a", current_page)
+                        .attr("href","decide_where.htm#"+id)
+                        .click(function() {
+                            localStorage.event_id = id;
+                            localStorage.isOwner = isOwner;
+                        });
                           
                     getEventInfo(id);
                     if(isOwner) {
@@ -495,7 +488,6 @@
                 $("#event_number").val(event_id);
                 break;
             case "when":
-                hideLoading();
                 if (localStorage.isJoin) {
                     console.log("Join!" + localStorage.event_id);
                     delete localStorage.isJoin;

@@ -1,4 +1,4 @@
-package com.nuttyknot.whenwhere;
+package com.nuttyknot.whenwhere.webview;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +24,7 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.nuttyknot.whenwhere.WebviewActivity;
+import com.nuttyknot.whenwhere.RestClient;
 
 public class JavaScriptInterface {
 	private Context mContext;
@@ -31,7 +32,8 @@ public class JavaScriptInterface {
 	private Handler handler;
 
 	private SharedPreferences mPrefs;
-	private Facebook facebook = new Facebook("352831231424321");
+	public static final Facebook facebook = new Facebook("352831231424321");
+	private ProgressDialog progressDialog;
 
 	/** Instantiate the interface and set the context */
 	JavaScriptInterface(Context c, WebView w, Handler h) {
@@ -49,24 +51,7 @@ public class JavaScriptInterface {
 		Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
 	}
 
-	public void createWhere(int event_id) {
-		Intent intent = new Intent(mContext, WhereActivity.class);
-		intent.putExtra("event_id", event_id);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		mContext.startActivity(intent);
-	}
-
-	public void createWhere() {
-		Intent intent = new Intent(mContext, WhereActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		mContext.startActivity(intent);
-	}
-
-	public void loadPage(String in) {
-		loadUrl("file:///android_asset/" + in);
-	}
-
-	public void loadUrl(final String in) {
+	private void loadUrl(final String in) {
 		handler.post(new Runnable() {
 			public void run() {
 				browser.loadUrl(in);
@@ -96,7 +81,7 @@ public class JavaScriptInterface {
 		// "https://mrstrountlyinhedgmadendi:mLRN14gNMLEoDqlaIvtU7VXq@nuttyknot.cloudant.com/whenwhere";
 		String url = "https://nuttyknot.cloudant.com/whenwhere";
 		Log.d("com.nuttyknot.whenwhere", jsonInput.toString());
-		JSONObject json = RestClient.connect(url, jsonInput);
+		JSONObject json = RestClient.connect_sync(url, jsonInput, "POST");
 		try {
 			loadUrl("javascript:whenwhere.callback('" + json.get("id") + "')");
 		} catch (JSONException e) {
@@ -135,7 +120,7 @@ public class JavaScriptInterface {
 		} finally {
 			Log.d("Facebook", output_json);
 			loadUrl("javascript:whenwhere.facebook_callback('" + output_json
-					+ "')");			
+					+ "')");
 		}
 	}
 
@@ -166,7 +151,7 @@ public class JavaScriptInterface {
 		} finally {
 			Log.d("Facebook", output_json);
 			loadUrl("javascript:whenwhere.facebook_callback('" + output_json
-					+ "')");			
+					+ "')");
 		}
 	}
 
@@ -243,5 +228,17 @@ public class JavaScriptInterface {
 			Intent intent) {
 		Log.d("misc", "authorizeCallback");
 		facebook.authorizeCallback(requestCode, resultCode, intent);
+	}
+
+	public void showLoading() {
+		if (progressDialog == null || !progressDialog.isShowing()) {
+			progressDialog = ProgressDialog.show(mContext, "", "Loading...");
+		}
+	}
+
+	public void hideLoading() {
+		if (progressDialog != null && progressDialog.isShowing()) {
+			progressDialog.dismiss();
+		}
 	}
 }

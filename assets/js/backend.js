@@ -85,6 +85,12 @@
 		"showContact": function(email) {
 			window.location = "mailto:"+email;
 		},
+		"showLoading":function() {
+			$.mobile.showPageLoadingMsg();
+		},
+		"hideLoading":function() {
+			$.mobile.hidePageLoadingMsg();
+		},
 	}
 
 	if(!window.backend) {

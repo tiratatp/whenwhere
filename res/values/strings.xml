@@ -3,5 +3,7 @@
 
     <string name="hello">Hello World, WhenwhereActivity!</string>
     <string name="app_name">When &amp; Where</string>
+    <string name="where_title">Where?</string>
+    <string name="done">Done</string>
 
 </resources>

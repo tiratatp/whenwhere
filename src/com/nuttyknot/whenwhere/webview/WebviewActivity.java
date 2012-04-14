@@ -1,10 +1,11 @@
-package com.nuttyknot.whenwhere;
+package com.nuttyknot.whenwhere.webview;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.nuttyknot.whenwhere.R;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,7 +30,7 @@ public class WebviewActivity extends Activity {
 		JSONObject jsonInput = new JSONObject();
 		jsonInput.put("latitude", current_latitude);
 		jsonInput.put("longitude", current_longitude);
-		jsonInput.put("position", current_latitude+", "+current_longitude);
+		jsonInput.put("position", current_latitude + ", " + current_longitude);
 		jsonInput.put("radius", radius);
 		return jsonInput;
 	}
@@ -42,7 +43,8 @@ public class WebviewActivity extends Activity {
 
 		Intent intent = getIntent();
 		String url = "file:///android_asset/main.htm";
-		if (intent.hasExtra("event_id") || (intent.hasExtra("latitude") && intent.hasExtra("longitude"))) {
+		if (intent.hasExtra("event_id")
+				|| (intent.hasExtra("latitude") && intent.hasExtra("longitude"))) {
 			current_latitude = intent.getStringExtra("latitude");
 			current_longitude = intent.getStringExtra("longitude");
 			radius = intent.getIntExtra("radius", 0);
@@ -62,6 +64,7 @@ public class WebviewActivity extends Activity {
 
 		javaScriptInterface = new JavaScriptInterface(this, browser, handler);
 
+		browser.setWebViewClient(new ExtendedWebViewClient(this));
 		browser.addJavascriptInterface(javaScriptInterface, "backend");
 		browser.loadUrl(url);
 		browser.setWebChromeClient(new WebChromeClient() {
@@ -78,11 +81,11 @@ public class WebviewActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// Check if the key event was the Back button and if there's history
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Log.d("com.nuttyknot.whenwhere", "onKeyDown:" + browser.getUrl());
 			if (browser.canGoBack()) {
 				browser.goBack();
 				return true;
-			} else if (browser.getUrl() != "file:///android_asset/main.htm") {
+			} else if (!browser.getUrl().equals(
+					"file:///android_asset/main.htm")) {
 				loadUrl("file:///android_asset/main.htm");
 				return true;
 			}
