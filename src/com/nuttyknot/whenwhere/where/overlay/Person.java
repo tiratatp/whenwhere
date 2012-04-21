@@ -13,7 +13,7 @@ public class Person extends OverlayItem {
 		this.radius = radius;
 	}
 
-	public int getRadius() {
+	protected int getRadius() {
 		return radius;
 	}
 

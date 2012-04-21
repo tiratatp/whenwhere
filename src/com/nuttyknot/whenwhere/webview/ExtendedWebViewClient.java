@@ -21,7 +21,6 @@ public class ExtendedWebViewClient extends WebViewClient {
 	public boolean shouldOverrideUrlLoading(WebView view, String url) {
 		Uri uri = Uri.parse(url);
 		String page = uri.getLastPathSegment();
-		//Log.d("Loading", page);
 		if (page.equals("where.htm")) {
 			Intent intent = new Intent(context, WhereActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -37,14 +36,6 @@ public class ExtendedWebViewClient extends WebViewClient {
 			return true;
 		}
 
-		/*
-		 * if (Uri.parse(url).getHost().equals("www.example.com")) { // This is
-		 * my web site, so do not override; let my WebView load the // page
-		 * return false; } // Otherwise, the link is not for a page on my site,
-		 * so launch another // Activity that handles URLs Intent intent = new
-		 * Intent(Intent.ACTION_VIEW, Uri.parse(url)); startActivity(intent);
-		 * return true;
-		 */
 		return false;
 	}
 

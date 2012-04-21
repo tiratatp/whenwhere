@@ -10,17 +10,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.facebook.android.Facebook;
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.ItemizedOverlay;
+import com.google.android.maps.MapView;
 import com.nuttyknot.whenwhere.R;
 import com.nuttyknot.whenwhere.webview.JavaScriptInterface;
+import com.readystatesoftware.mapviewballoons.BalloonItemizedOverlay;
 
-public class PlaceOverlay extends ItemizedOverlay<Place> {
+public class PlaceOverlay extends BalloonItemizedOverlay<Place> {
 
 	private ArrayList<Place> placesList;
 	private Hashtable<String, Integer> placesHash;
@@ -30,19 +33,28 @@ public class PlaceOverlay extends ItemizedOverlay<Place> {
 	private Drawable defaultPin;
 	private Drawable pickedPin;
 
-	public PlaceOverlay(Context context, Drawable defaultMarker) {
-		super(boundCenterBottom(defaultMarker));
+	public PlaceOverlay(Context context, MapView mapView, Drawable defaultMarker) {
+		super(boundCenterBottom(defaultMarker), mapView);
 		placesList = new ArrayList<Place>();
 		placesHash = new Hashtable<String, Integer>();
 		this.context = context;
 		this.defaultPin = defaultMarker;
-		pickedPin = context.getResources().getDrawable(R.drawable.blue_marker);
+		pickedPin = context.getResources().getDrawable(R.drawable.marker2);
 		populate();
 	}
 
-	public void addOverlay(Place overlay) {
-		placesList.add(overlay);
-		populate();
+	@Override
+	public boolean onTap(int index) {
+		// TODO Auto-generated method stub
+		Place item = placesList.get(index);
+		Toast.makeText(context, "Select " + item.getTitle(), Toast.LENGTH_SHORT)
+				.show();
+		item.setMarker(boundCenterBottom(pickedPin));
+		if (pickedPlace != null && pickedPlace != item) {
+			pickedPlace.setMarker(defaultPin);
+		}
+		pickedPlace = item;
+		return super.onTap(index);
 	}
 
 	@Override
@@ -55,21 +67,24 @@ public class PlaceOverlay extends ItemizedOverlay<Place> {
 		// TODO Auto-generated method stub
 		return placesList.size();
 	}
-	
+
 	public Place getPickedPlace() {
 		return pickedPlace;
 	}
 
 	@Override
-	protected boolean onTap(int index) {
-		Place newPlace = placesList.get(index);
-		Toast.makeText(context, newPlace.getTitle(), Toast.LENGTH_SHORT).show();
-		newPlace.setMarker(boundCenterBottom(pickedPin));
-		if (pickedPlace != null) {
-			pickedPlace.setMarker(defaultPin);
+	protected boolean onBalloonTap(int index, Place item) {
+		// open facebook page
+		try {
+			Intent intent = new Intent(Intent.ACTION_VIEW,
+					Uri.parse("https://www.facebook.com/"
+							+ item.json.getString("id")));
+			context.startActivity(intent);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		pickedPlace = newPlace;
-		return super.onTap(index);
+		return super.onBalloonTap(index, item);
 	}
 
 	public void setCenter(final GeoPoint center) {
@@ -104,7 +119,7 @@ public class PlaceOverlay extends ItemizedOverlay<Place> {
 													.getDouble("latitude") * 1E6),
 											(int) (location
 													.getDouble("longitude") * 1E6)),
-									place.getString("name"), "");
+									place.getString("name"), "", place);
 							place_pos = placesList.size();
 							placesList.add(place_marker);
 							placesHash.put(place_id, place_pos);

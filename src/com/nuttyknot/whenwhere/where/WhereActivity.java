@@ -11,7 +11,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -36,20 +35,22 @@ import com.nuttyknot.whenwhere.where.overlay.PlaceOverlay;
 
 public class WhereActivity extends MapActivity implements ActionListener {
 
-	MapController mapController;
-	ExtendedMapView mapView;
-	SeekBar seekBar;
-	Button doneButton;
-	CircleOverlay circleOverlay;
-	PlaceOverlay placeOverlay;
-	PersonOverlay personOverlay;
+	private MapController mapController;
+	private ExtendedMapView mapView;
+	private SeekBar seekBar;
+	private Button doneButton;
+	private CircleOverlay circleOverlay;
+	private PlaceOverlay placeOverlay;
+	private PersonOverlay personOverlay;
 
-	Location currentPosition;
+	private List<Overlay> overlayList;
+
+	private Location currentPosition;
 	private boolean positionReady = false;
 
-	private String role = "";
+	private Place pickedPlace;
 
-	int oldZoomLevel = -1;
+	private String role = "";
 
 	// private static final String TAG = "RefreshLocationListener";
 
@@ -63,13 +64,24 @@ public class WhereActivity extends MapActivity implements ActionListener {
 	}
 
 	private void callWhenActivity() {
-		Log.d("com.nuttyknot.whenwhere", "Position: " + currentPosition);
 		Intent intent = new Intent(this, WebviewActivity.class);
-		intent.putExtra("latitude",
-				String.valueOf(currentPosition.getLatitude()));
-		intent.putExtra("longitude",
-				String.valueOf(currentPosition.getLongitude()));
-		intent.putExtra("radius", seekBar.getProgress());
+		if (role.equals("decide_where")) {
+			try {
+				JSONObject json = pickedPlace.json;
+				intent.putExtra("place_id", json.getString("id"));
+				intent.putExtra("place_name", json.getString("name"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+		} else {
+			intent.putExtra("latitude",
+					String.valueOf(currentPosition.getLatitude()));
+			intent.putExtra("longitude",
+					String.valueOf(currentPosition.getLongitude()));
+			intent.putExtra("radius", seekBar.getProgress());
+		}
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
@@ -106,23 +118,18 @@ public class WhereActivity extends MapActivity implements ActionListener {
 
 		mapView = (ExtendedMapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(true);
-		List<Overlay> overlayList = mapView.getOverlays();
+		overlayList = mapView.getOverlays();
 
 		if (role.equals("decide_where")) {
 			mapView.addEventListener("pan", this);
 			mapView.addEventListener("zoom", this);
 
-			placeOverlay = new PlaceOverlay(this, this.getResources()
-					.getDrawable(R.drawable.white_marker));
-			personOverlay = new PersonOverlay(this, this.getResources()
+			placeOverlay = new PlaceOverlay(this, mapView, this.getResources()
 					.getDrawable(R.drawable.marker));
-			overlayList.add(placeOverlay);
-			overlayList.add(personOverlay);
+			personOverlay = new PersonOverlay(this, this.getResources()
+					.getDrawable(R.drawable.white_marker));
 
 			String event_id = intent.getStringExtra("event_id");
-			// String url =
-			// "https://nuttyknot.cloudant.com/whenwhere/_design/rsvp/_view/by_event_id?key=\""
-			// + event_id + "\"";
 			String url = "https://nuttyknot.cloudant.com/whenwhere/_design/rsvp/_view/by_event_id";
 			JSONObject jsonInput = new JSONObject();
 			try {
@@ -173,6 +180,9 @@ public class WhereActivity extends MapActivity implements ActionListener {
 								(int) ((mean_lng / people_length) * 1E6));
 						placeOverlay.setCenter(mean_point);
 						mapController.animateTo(mean_point);
+
+						overlayList.add(placeOverlay);
+						overlayList.add(personOverlay);
 
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -232,11 +242,9 @@ public class WhereActivity extends MapActivity implements ActionListener {
 				if (positionReady) {
 					callWhenActivity();
 				} else if (role.equals("decide_where")) {
-					Place pickedPlace = placeOverlay.getPickedPlace();
+					pickedPlace = placeOverlay.getPickedPlace();
 					if (pickedPlace != null) {
-						Log.d("WhereActivity",
-								"pickedPlace:" + pickedPlace.getTitle());
-
+						callWhenActivity();
 					}
 				}
 			}

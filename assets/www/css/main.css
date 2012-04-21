@@ -1,0 +1,7 @@
+.center{text-align:center}
+.italic{font-style:italic}
+#connect_facebook{height:30px;cursor:pointer}
+.owner,.dual_slider input[type="number"]{display:none}
+.dual_slider div.ui-slider{position: absolute;left:22%;width:60%}
+#decide_when .disabled .ui-slider-handle,#decide_when .disabled .ui-slider{pointer-events:none}
+#event_info .ui-li-thumb{top:inherit!important;border-radius:0!important}

@@ -63,6 +63,10 @@ public class JavaScriptInterface {
 			String event_id) {
 		Date now = new Date();
 		String dateString = String.format("%tF", now);
+
+		String c2dm_registrationKey = mContext.getSharedPreferences("c2dmPref",
+				Context.MODE_PRIVATE).getString("registrationKey", "");
+
 		JSONObject jsonInput = new JSONObject();
 		try {
 			jsonInput = ((WebviewActivity) mContext).getStoredVariable();
@@ -70,6 +74,41 @@ public class JavaScriptInterface {
 			jsonInput.put("name", name);
 			jsonInput.put("email", email);
 			jsonInput.put("action", action);
+			jsonInput.put("event_id", event_id);
+			jsonInput.put("when", when);
+			jsonInput.put("create_at", dateString);
+			jsonInput.put("c2dm", c2dm_registrationKey);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// String url =
+		// "https://mrstrountlyinhedgmadendi:mLRN14gNMLEoDqlaIvtU7VXq@nuttyknot.cloudant.com/whenwhere";
+		String url = "https://nuttyknot.cloudant.com/whenwhere";
+		Log.d("com.nuttyknot.whenwhere", jsonInput.toString());
+		JSONObject json = RestClient.connect_sync(url, jsonInput, "POST");
+		try {
+			loadUrl("javascript:whenwhere.callback('" + json.get("id") + "')");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void decide(String event_id, String place_id, String place_name,
+			String when) {
+		Date now = new Date();
+		String dateString = String.format("%tF", now);
+		JSONObject jsonInput = new JSONObject();
+		try {
+			if (place_id.compareTo("undefined") == 0
+					|| place_name.compareTo("undefined") == 0) {
+				jsonInput = ((WebviewActivity) mContext).getPickedPlace();
+			} else {
+				jsonInput.put("place_id", place_id);
+				jsonInput.put("place_name", place_name);
+			}
+			jsonInput.put("type", "decision");
 			jsonInput.put("event_id", event_id);
 			jsonInput.put("when", when);
 			jsonInput.put("create_at", dateString);
@@ -90,12 +129,11 @@ public class JavaScriptInterface {
 		}
 	}
 
-	public void shareLink(final String img_url) {
-		String message = "Join me at " + img_url;
-		Log.d("com.nuttyknot.whenwhere", message);
+	public void shareLink(final String msg) {
+		Log.d("com.nuttyknot.whenwhere", msg);
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("text/plain");
-		share.putExtra(Intent.EXTRA_TEXT, message);
+		share.putExtra(Intent.EXTRA_TEXT, msg);
 
 		mContext.startActivity(Intent.createChooser(share, "Share this!"));
 	}

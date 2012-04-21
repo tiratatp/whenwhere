@@ -1,5 +1,8 @@
 package com.nuttyknot.whenwhere.webview;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,6 +11,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.nuttyknot.whenwhere.R;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,9 +26,18 @@ public class WebviewActivity extends Activity {
 	private WebView browser;
 	private String current_latitude;
 	private String current_longitude;
+	private String picked_place_id;
+	private String picked_place_name;
 	private int radius;
 	private Handler handler;
 	private JavaScriptInterface javaScriptInterface;
+
+	protected JSONObject getPickedPlace() throws JSONException {
+		JSONObject jsonInput = new JSONObject();
+		jsonInput.put("place_id", picked_place_id);
+		jsonInput.put("place_name", picked_place_name);
+		return jsonInput;
+	}
 
 	protected JSONObject getStoredVariable() throws JSONException {
 		JSONObject jsonInput = new JSONObject();
@@ -40,17 +53,30 @@ public class WebviewActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		String event_id = "";
 		Intent intent = getIntent();
-		String url = "file:///android_asset/main.htm";
+		String action = intent.getAction();
+		String url = "file:///android_asset/www/main.htm";
+		if (Intent.ACTION_VIEW.equals(action)) {
+			String fragment = intent.getData().getFragment();
+			Matcher eventIdMatcher = Pattern.compile("event_id=([A-Za-z0-9]+)")
+					.matcher(fragment);
+			if (eventIdMatcher.find()) {
+				event_id = eventIdMatcher.group(1);
+				Log.d("Event_id", event_id);
+				url = "file:///android_asset/www/search.htm";
+			}
+		}
 		if (intent.hasExtra("event_id")
 				|| (intent.hasExtra("latitude") && intent.hasExtra("longitude"))) {
 			current_latitude = intent.getStringExtra("latitude");
 			current_longitude = intent.getStringExtra("longitude");
 			radius = intent.getIntExtra("radius", 0);
-			url = "file:///android_asset/when.htm";
-		} else {
-			url = "file:///android_asset/main.htm";
+			url = "file:///android_asset/www/when.htm";
+		} else if (intent.hasExtra("place_id") && intent.hasExtra("place_name")) {
+			picked_place_id = intent.getStringExtra("place_id");
+			picked_place_name = intent.getStringExtra("place_name");
+			url = "file:///android_asset/www/decide_when.htm";
 		}
 
 		handler = new Handler();
@@ -75,6 +101,21 @@ public class WebviewActivity extends Activity {
 				return true;
 			}
 		});
+
+		// register C2DM
+		Intent registrationIntent = new Intent(
+				"com.google.android.c2dm.intent.REGISTER");
+
+		registrationIntent.putExtra("app",
+				PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+
+		registrationIntent.putExtra("sender", "nutty.knot@gmail.com");
+
+		this.startService(registrationIntent);
+
+		if (event_id.compareTo("") != 0) {
+			loadUrl("javascript:whenwhere.callback('" + event_id + "')");
+		}
 	}
 
 	@Override
@@ -85,8 +126,8 @@ public class WebviewActivity extends Activity {
 				browser.goBack();
 				return true;
 			} else if (!browser.getUrl().equals(
-					"file:///android_asset/main.htm")) {
-				loadUrl("file:///android_asset/main.htm");
+					"file:///android_asset/www/main.htm")) {
+				loadUrl("file:///android_asset/www/main.htm");
 				return true;
 			}
 		}
@@ -114,8 +155,15 @@ public class WebviewActivity extends Activity {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
 		if (scanResult != null) {
-			loadUrl("javascript:callback('" + scanResult.getContents() + "')");
+			String content = scanResult.getContents();
+			Log.d("BarCode", content);
+			Matcher eventIdMatcher = Pattern
+					.compile("#event_id=([A-Za-z0-9]+)").matcher(content);
+			if (eventIdMatcher.find()) {
+				String event_id = eventIdMatcher.group(1);
+				Log.d("Event_id", event_id);
+				loadUrl("javascript:whenwhere.callback('" + event_id + "')");
+			}
 		}
-
 	}
 }

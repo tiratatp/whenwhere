@@ -120,7 +120,7 @@ public class RestClient {
 		// base64 mrstrountlyinhedgmadendi:mLRN14gNMLEoDqlaIvtU7VXq
 		httppost.setHeader("Authorization",
 				"Basic bXJzdHJvdW50bHlpbmhlZGdtYWRlbmRpOm1MUk4xNGdOTUxFb0RxbGFJdnRVN1ZYcQ==");
-		Log.i("POST", url); // prevent exposure of token
+		// Log.i("POST", url); // prevent exposure of token
 
 		// Execute the request
 		HttpResponse response;
@@ -180,7 +180,7 @@ public class RestClient {
 		// base64 mrstrountlyinhedgmadendi:mLRN14gNMLEoDqlaIvtU7VXq
 		httpget.setHeader("Authorization",
 				"Basic bXJzdHJvdW50bHlpbmhlZGdtYWRlbmRpOm1MUk4xNGdOTUxFb0RxbGFJdnRVN1ZYcQ==");
-		Log.i("GET", uri_str); // prevent exposure of token
+		// Log.i("GET", uri_str); // prevent exposure of token
 
 		// Execute the request
 		HttpResponse response;

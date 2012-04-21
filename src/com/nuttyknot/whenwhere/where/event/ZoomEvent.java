@@ -1,6 +1,6 @@
 package com.nuttyknot.whenwhere.where.event;
 
-public class ZoomEvent extends Event{
+public class ZoomEvent extends Event {
 	public int oldZoomLevel;
 	public int newZoomLevel;
 
