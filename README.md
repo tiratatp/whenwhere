@@ -10,6 +10,7 @@ This app will allow you to pick the place closest to everybody and the time ever
 
 Fully open-sourced!
 https://github.com/nuttyknot
+https://play.google.com/store/apps/details?id=com.nuttyknot.whenwhere
 
 By @nuttyknot
 
