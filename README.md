@@ -9,10 +9,10 @@ This app will allow you to pick the place closest to everybody and the time ever
 * Now with push notification using Google C2DM
 
 Fully open-sourced!
-https://github.com/nuttyknot
+https://github.com/tiratatp
 https://play.google.com/store/apps/details?id=com.nuttyknot.whenwhere
 
-By @nuttyknot
+By @tiratatp
 
 Icon from Aeolus HD
 http://raadius.deviantart.com/art/Aeolus-HD-Extension-Pack-203773529
